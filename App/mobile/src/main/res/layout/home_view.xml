@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start by entering the ZIP code that you want to browse"
+        android:id="@+id/textView"
+        android:textSize="30dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtZip"
+        android:textSize="24dp"
+        android:hint="enter ZIP here"
+        android:layout_marginTop="72dp"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Use Current Location"
+        android:id="@+id/cmdUseCurrentLocaton"
+        android:layout_below="@+id/txtZip"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:id="@+id/cmdNext"
+        android:layout_below="@+id/cmdUseCurrentLocaton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="123dp" />
+
+</RelativeLayout>
