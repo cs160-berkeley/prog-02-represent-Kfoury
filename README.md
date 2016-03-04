@@ -8,7 +8,7 @@ FirstName LastName ([your_email@berkeley.edu](mailto:your_email@berkeley.edu))
 
 ## Demo Video
 
-See Represent! (https://www.youtube.com/watch?v=ttFOdv8OKCo) in action
+See [Represent!](https://www.youtube.com/watch?v=ttFOdv8OKCo) in action
 
 ## Screenshots
 
