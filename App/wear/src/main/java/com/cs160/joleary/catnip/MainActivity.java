@@ -1,6 +1,7 @@
 package com.cs160.joleary.catnip;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
@@ -15,9 +16,25 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.entity.ByteArrayEntity;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
 
 
 public class MainActivity extends Activity {
@@ -25,10 +42,16 @@ public class MainActivity extends Activity {
     private TextView mTextView;
     private Button mFeedBtn;
 
-    private HashMap<String, ArrayList<repPerson>> dataSource  ;
+
 
 
     private String currentZip;
+
+    private ProgressDialog dialog;
+
+    private JSONArray dataSource;
+    private JSONObject dataSource_;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +59,72 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
 
+       // dialog = new ProgressDialog(this);
+
+
+
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
             currentZip = extras.getString("ZIP");
+
+            JSONObject all_data = null;
+            try {
+                all_data = new JSONObject(currentZip );
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+//            try {
+//                int zip = all_data.getInt("zip");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+
+
+            try {
+                dataSource = (JSONArray)all_data.get("people");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
+
+            SampleGridPagerAdapter adapter_ = new SampleGridPagerAdapter(this, getFragmentManager());
+
+            adapter_.setDataSource(dataSource);
+
+            try {
+                adapter_.setCurrentZip(all_data.getString("zip"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                adapter_.setVotesData(all_data.getJSONObject("votes"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            pager.setAdapter(adapter_);
+
+
+
         }else
 
         {
             currentZip = "94704";
         }
+
+
+       // initRequest(false,0,0,currentZip);
+
+
+
+
 
         /*
         mFeedBtn = (Button) findViewById(R.id.feed_btn);
@@ -58,13 +138,7 @@ public class MainActivity extends Activity {
         }*/
 
 
-        final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
 
-        SampleGridPagerAdapter adapter_ = new SampleGridPagerAdapter(this, getFragmentManager());
-
-        adapter_.setCurrentZip(currentZip);
-
-        pager.setAdapter(adapter_);
 
 
 /*
@@ -148,34 +222,163 @@ public class MainActivity extends Activity {
 
 
 
-    private void populatePersons()
+    ///SPINNER ADAPTER
 
+
+    public void initRequest(Boolean isLocation, double lat, double longitude, String zip_ )
     {
-        dataSource = new HashMap<String, ArrayList<repPerson>>() ;
+        HttpResponse g;
 
 
 
-        String[] comm = {"Hello", "World"};
-        String[] bills = {"Hello", "World"};
-        ArrayList<repPerson> mySenators_zip1 = new ArrayList<repPerson>();
 
 
-        mySenators_zip1.add(new repPerson(comm,"Fadi","fadi_zip1@fadi.space","http://fadi.space","Independent", "YES WE CAN #FREEDOM", R.drawable.food_bg_160,bills));
-        mySenators_zip1.add(new repPerson(comm,"Pascal","fadi@fadi.space","http://fadi1.space","Independent", "TODAY IS OUR DAY ", R.drawable.food_bg_160,bills));
-        mySenators_zip1.add(new repPerson(comm,"Scala","fadi@fadi.space","http://fadi2.space","Independent", "MAKE AMERICA GREAT AGAIN", R.drawable.food_bg_160,bills));
+        AsyncHttpClient client = new AsyncHttpClient();
+        String json_;
 
 
-        dataSource.put("94704",mySenators_zip1);
+        if (isLocation) {
 
-        ArrayList<repPerson> mySenators_zip2 = new ArrayList<repPerson>();
+            json_ = " {\n" +
+                    " \t\"type\": \"geo\",\n" +
+                    " \t\"data\": [" + new Double(lat).toString() +","+ new Double(longitude).toString() + "]\n" +
+                    " }";
+        }else
 
-        mySenators_zip2.add(new repPerson(comm,"Antoine","fadi_zip1@fadi.space","http://fadi.space","Independent", "YES WE CAN #FREEDOM", R.drawable.food_bg_160,bills));
-        mySenators_zip2.add(new repPerson(comm, "Rick", "fadi@fadi.space", "http://fadi.space", "Independent", "WE ARE GETTING RID OF THE TYRANY OF OIL ONCE AND FOR ALL", R.drawable.food_bg_160, bills));
+        {
 
-        dataSource.put("94703", mySenators_zip2);
+            json_ = " {\n" +
+                    " \t\"type\": \"zip\",\n" +
+                    " \t\"data\": " +zip_.toString()+"\n" +
+                    " }";
+
+
+        }
+
+
+
+
+
+
+        //ByteArrayEntity entity = new ByteArrayEntity(json_.getBytes("UTF-8"));
+
+        StringEntity entity = null;
+        try {
+            entity = new StringEntity(json_);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        ByteArrayEntity entity_ = null;
+        try {
+            entity_ = new ByteArrayEntity(json_.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+        entity_.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+
+
+
+        //Here we need to enable the spinner
+
+      //  dialog.setMessage("Please wait");
+       // dialog.show();
+
+
+
+
+        ///
+        client.post(getApplicationContext(), "http://tagjr.co/represent", entity_, "application/json", new JsonHttpResponseHandler() {
+
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.d("tag", "Login success");
+                //here is the SUCCESS
+
+                dataSource_ = response;
+
+
+                //here we should call the
+
+
+                try {
+                    gotReponseFromServer();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+
+
+
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                Log.d("tag", "Login success");
+                //HERE IS THE FAIL
+
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+
+                Toast.makeText(getApplicationContext(), "Unknown Location", Toast.LENGTH_SHORT).show();
+
+
+
+            }
+
+
+        });
+
+
+
 
 
     }
+
+
+    void gotReponseFromServer() throws JSONException {
+
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+
+
+        JSONObject all_data = (JSONObject) dataSource_.get("all_data") ;
+
+        int zip = all_data.getInt("zip");
+
+
+
+
+
+        dataSource = (JSONArray)all_data.get("people");
+
+
+
+        final GridViewPager pager = (GridViewPager) findViewById(R.id.pager);
+
+        SampleGridPagerAdapter adapter_ = new SampleGridPagerAdapter(this, getFragmentManager());
+
+        adapter_.setDataSource(dataSource);
+
+        pager.setAdapter(adapter_);
+
+
+
+
+    }
+
+
 
 
 }

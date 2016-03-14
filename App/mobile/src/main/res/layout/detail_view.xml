@@ -6,7 +6,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgSenator"
+        android:id="@+id/imgSenator_"
         android:minWidth="100dp"
         android:minHeight="100dp"
         android:src="@android:mipmap/sym_def_app_icon"
@@ -19,7 +19,7 @@
         android:text="McKfoury"
         android:id="@+id/txtSenatorName"
         android:textSize="50dp"
-        android:layout_below="@+id/imgSenator"
+        android:layout_below="@+id/imgSenator_"
         android:layout_centerHorizontal="true" />
 
     <TextView

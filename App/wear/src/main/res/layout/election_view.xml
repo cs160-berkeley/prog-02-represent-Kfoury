@@ -7,17 +7,19 @@
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:id="@+id/progressBar"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
-        android:progressTint="#ff393c"
-        android:backgroundTint="#0abdff"
-        android:foreground="#4755ff"
+        android:progressTint="#e4e7ff"
+        android:foreground="#1b337d"
         android:progress="50"
         android:max="100"
-        android:indeterminate="false" />
+        android:indeterminate="false"
+        android:paddingTop="0dp"
+        android:layout_marginBottom="54dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/senator_2"
+        android:background="#1b337d" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,7 +29,8 @@
         android:id="@+id/sentor_1"
         android:layout_above="@+id/progressBar"
         android:layout_alignParentStart="true"
-        android:background="#ca151515" />
+        android:background="#1b337d"
+        android:layout_toStartOf="@+id/senator_2" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -37,7 +40,7 @@
         android:id="@+id/senator_2"
         android:layout_above="@+id/progressBar"
         android:layout_alignParentEnd="true"
-        android:background="#ca151515" />
+        android:background="#1b337d" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -49,7 +52,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
-        android:background="#ca151515" />
+        android:background="#1b337d" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -60,6 +63,6 @@
         android:textSize="12dp"
         android:layout_below="@+id/textView4"
         android:layout_centerHorizontal="true"
-        android:background="#ca151515" />
+        android:background="#1b337d" />
 
 </RelativeLayout>

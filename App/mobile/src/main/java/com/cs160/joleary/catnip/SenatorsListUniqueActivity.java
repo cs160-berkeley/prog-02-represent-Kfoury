@@ -1,9 +1,10 @@
 package com.cs160.joleary.catnip;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.app.Activity;
@@ -11,76 +12,41 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import android.widget.AdapterView.OnItemClickListener;
 
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 ///
-import android.widget.Toast;
-
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.app.AlertDialog;
-import android.widget.EditText;
-import android.text.InputType;
-import android.content.DialogInterface;
-import android.app.TimePickerDialog;
-import java.util.Calendar;
-import android.content.SharedPreferences;
-import android.app.DialogFragment;
-import android.widget.AdapterView;
-
-import android.support.v4.app.TaskStackBuilder;
-
-import android.support.v4.app.NotificationCompat;
-
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 
 
-import android.content.res.Resources;
-
-import android.app.Dialog;
-import android.widget.TimePicker;
-import android.text.format.DateFormat;
-import android.app.AlarmManager;
 import android.content.Intent;
-import android.widget.Spinner;
-
-import android.view.View;
 
 
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.content.IntentFilter;
 
-import java.util.ArrayList;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.entity.ByteArrayEntity;
+import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
 
 
 //
@@ -92,12 +58,15 @@ public class SenatorsListUniqueActivity extends Activity {
     private IntentFilter mIntentFilter;
     BroadcastReceiver myReceive;
 
-    private Map<String, ArrayList<repPerson>> dataSource;
-
+    private JSONArray dataSource;
+    private JSONObject dataSource_;
     private String currentZip;
 
 
     private boolean shakeHappened = false;
+
+
+    private ProgressDialog dialog;
 
 
 
@@ -107,24 +76,21 @@ public class SenatorsListUniqueActivity extends Activity {
         super.onCreate(savedInstanceState);
 
 
-        populatePersons();
-
-
-
-
-
+        dialog  = new ProgressDialog(SenatorsListUniqueActivity.this);
 
         Intent intent_i = getIntent();
-
-        currentZip = intent_i.getStringExtra("ZIP");
-
 
         setContentView(R.layout.senators_list_unique);
 
 
-        mySenators = dataSource.get(currentZip);
+        currentZip = intent_i.getStringExtra("ZIP");
 
-        populateListView();
+
+        //here we need to call  initRequest Based on the zip
+
+        initRequest(false,0.0,0.0,currentZip);
+
+
 
 
         myReceive = new BroadcastReceiver(){
@@ -163,21 +129,20 @@ public class SenatorsListUniqueActivity extends Activity {
                     if (shakeHappened == false) {
                         shakeHappened = true;
 
-                        if (currentZip.equals("94704")) {
-                            currentZip = "94703";
-                        } else {
-                            currentZip = "94704";
-                        }
+
+
+                        initRequest(false,0.0,0.0,"99999");
+
 
 
                         ///UPDATE THE WATCH
-                        mySenators = dataSource.get(currentZip);
+                      //  mySenators = dataSource.get(currentZip);
 
-                        populateListView();
-
-                        Intent sendIntent = new Intent(getApplicationContext(), PhoneToWatchService.class);
-                        sendIntent.putExtra("ZIP", currentZip);
-                        startService(sendIntent);
+//                        populateListView();
+//
+//                        Intent sendIntent = new Intent(getApplicationContext(), PhoneToWatchService.class);
+//                        sendIntent.putExtra("ZIP", currentZip);
+//                        startService(sendIntent);
                     }
 
                 }
@@ -283,8 +248,13 @@ public class SenatorsListUniqueActivity extends Activity {
     private class MyListAdapter extends ArrayAdapter<repPerson>{
         public MyListAdapter()
         {
-            super(SenatorsListUniqueActivity.this, R.layout.senator_list_item, mySenators );
+            super(SenatorsListUniqueActivity.this, R.layout.senator_list_item );
 
+        }
+
+        @Override
+        public int getCount() {
+            return dataSource_.length();
         }
 
         @Override
@@ -301,13 +271,83 @@ public class SenatorsListUniqueActivity extends Activity {
 
             //we need to find the exercise to work with then fill the view
 
-            repPerson currentPerson = mySenators.get(position);
-
-
+            JSONObject currentPerson = null ;
+            try {
+                currentPerson = (JSONObject)dataSource.get(position);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
 
             TextView txtName = (TextView) itemView.findViewById(R.id.txtName);
-            txtName.setText(currentPerson.getName());
+            try {
+                txtName.setText(currentPerson.getString("name"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            ImageView imgView = (ImageView) itemView.findViewById(R.id.imgSenator_);
+            try {
+                Picasso.with(getContext()).load(currentPerson.getString("picture")).fit().centerCrop().into(imgView);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            TextView txtTwitterName = (TextView) itemView.findViewById(R.id.txttwittername);
+            try {
+                txtTwitterName.setText(currentPerson.getString("twitter"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            TextView txtTweet = (TextView) itemView.findViewById(R.id.txttweet);
+            try {
+                txtTweet.setText(currentPerson.getString("last_tweet"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            TextView txtemail = (TextView) itemView.findViewById(R.id.txtEmail);
+            try {
+                txtemail.setText(currentPerson.getString("email"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            TextView txtwebsite = (TextView) itemView.findViewById(R.id.txtWeb);
+            try {
+                txtwebsite.setText(currentPerson.getString("website"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
+            TextView txtParty = (TextView) itemView.findViewById(R.id.txtParty);
+            try {
+
+                if (currentPerson.getString("type").equals("house"))
+                {
+                    txtParty.setText(currentPerson.getString("party") + " - House");
+                }else
+                {
+                    txtParty.setText(currentPerson.getString("party") + " - Senate");
+                }
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+
 
 
             //Fill in the view
@@ -361,35 +401,197 @@ ImageView imgView = (ImageView) itemView.findViewById(R.id.imgSenator);
 
 
     //A function that populates the list view data source
-    private void populatePersons()
+//    private void populatePersons()
+//
+//    {
+//        dataSource = new HashMap<String, ArrayList<repPerson>>() ;
+//
+//
+//
+//        String[] comm = {"Hello", "World"};
+//        String[] bills = {"Hello", "World"};
+//        ArrayList<repPerson> mySenators_zip1 = new ArrayList<repPerson>();
+//
+//
+//        mySenators_zip1.add(new repPerson(comm,"Fadi","fadi_zip1@fadi.space","http://fadi.space","Independent", "YES WE CAN #FREEDOM", R.drawable.fred_160,bills));
+//        mySenators_zip1.add(new repPerson(comm,"Pascal","fadi@fadi.space","http://fadi1.space","Independent", "TODAY IS OUR DAY ", R.drawable.fred_160,bills));
+//        mySenators_zip1.add(new repPerson(comm,"Scala","fadi@fadi.space","http://fadi2.space","Independent", "MAKE AMERICA GREAT AGAIN", R.drawable.fred_160,bills));
+//
+//
+//        dataSource.put("94704",mySenators_zip1);
+//
+//        ArrayList<repPerson> mySenators_zip2 = new ArrayList<repPerson>();
+//
+//        mySenators_zip2.add(new repPerson(comm,"Antoine","fadi_zip1@fadi.space","http://fadi.space","Independent", "YES WE CAN #FREEDOM", R.drawable.fred_160,bills));
+//        mySenators_zip2.add(new repPerson(comm,"Rick","fadi@fadi.space","http://fadi.space","Independent", "WE ARE GETTING RID OF THE TYRANY OF OIL ONCE AND FOR ALL", R.drawable.fred_160,bills));
+//
+//        dataSource.put("94703", mySenators_zip2);
+//
+//
+//    }
 
+
+    ///SPINNER ADAPTER
+
+
+    public void initRequest(Boolean isLocation, double lat, double longitude, String zip_ )
     {
-        dataSource = new HashMap<String, ArrayList<repPerson>>() ;
+        HttpResponse g;
 
 
 
-        String[] comm = {"Hello", "World"};
-        String[] bills = {"Hello", "World"};
-        ArrayList<repPerson> mySenators_zip1 = new ArrayList<repPerson>();
 
 
-        mySenators_zip1.add(new repPerson(comm,"Fadi","fadi_zip1@fadi.space","http://fadi.space","Independent", "YES WE CAN #FREEDOM", R.drawable.fred_160,bills));
-        mySenators_zip1.add(new repPerson(comm,"Pascal","fadi@fadi.space","http://fadi1.space","Independent", "TODAY IS OUR DAY ", R.drawable.fred_160,bills));
-        mySenators_zip1.add(new repPerson(comm,"Scala","fadi@fadi.space","http://fadi2.space","Independent", "MAKE AMERICA GREAT AGAIN", R.drawable.fred_160,bills));
+        AsyncHttpClient client = new AsyncHttpClient();
+        String json_;
 
 
-        dataSource.put("94704",mySenators_zip1);
+        if (isLocation) {
 
-        ArrayList<repPerson> mySenators_zip2 = new ArrayList<repPerson>();
+            json_ = " {\n" +
+                    " \t\"type\": \"geo\",\n" +
+                    " \t\"data\": [" + new Double(lat).toString() +","+ new Double(longitude).toString() + "]\n" +
+                    " }";
+        }else
 
-        mySenators_zip2.add(new repPerson(comm,"Antoine","fadi_zip1@fadi.space","http://fadi.space","Independent", "YES WE CAN #FREEDOM", R.drawable.fred_160,bills));
-        mySenators_zip2.add(new repPerson(comm,"Rick","fadi@fadi.space","http://fadi.space","Independent", "WE ARE GETTING RID OF THE TYRANY OF OIL ONCE AND FOR ALL", R.drawable.fred_160,bills));
+        {
 
-        dataSource.put("94703", mySenators_zip2);
+            json_ = " {\n" +
+                    " \t\"type\": \"zip\",\n" +
+                    " \t\"data\": " +zip_.toString()+"\n" +
+                    " }";
+
+
+        }
+
+
+
+
+
+
+        //ByteArrayEntity entity = new ByteArrayEntity(json_.getBytes("UTF-8"));
+
+        StringEntity entity = null;
+        try {
+            entity = new StringEntity(json_);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        ByteArrayEntity entity_ = null;
+        try {
+            entity_ = new ByteArrayEntity(json_.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+        entity_.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+
+
+
+        //Here we need to enable the spinner
+
+        dialog.setMessage("Please wait");
+        dialog.show();
+
+
+
+
+        ///
+        client.post(getApplicationContext(), "http://tagjr.co/represent", entity_, "application/json", new JsonHttpResponseHandler() {
+
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.d("tag", "Login success");
+                //here is the SUCCESS
+
+                dataSource_ = response;
+
+
+                //here we should call the
+
+
+                try {
+                    gotReponseFromServer();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+
+
+
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                Log.d("tag", "Login success");
+                //HERE IS THE FAIL
+
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+
+                Toast.makeText(getApplicationContext(), "Unknown Location", Toast.LENGTH_SHORT).show();
+
+
+
+            }
+
+
+        });
+
+
+
 
 
     }
 
 
-    ///SPINNER ADAPTER
+    void gotReponseFromServer() throws JSONException {
+
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+
+
+        JSONObject all_data = (JSONObject) dataSource_.get("all_data") ;
+
+        currentZip = new Integer(all_data.getInt("zip")).toString();
+
+
+
+
+
+
+        dataSource = (JSONArray)all_data.get("people");
+
+
+
+        populateListView();
+
+
+        Intent sendIntent = new Intent(getApplicationContext(), PhoneToWatchService.class);
+        sendIntent.putExtra("ZIP", all_data.toString());
+        startService(sendIntent);
+
+
+
+
+
+
+    }
+
+
+
+
+
+
 }

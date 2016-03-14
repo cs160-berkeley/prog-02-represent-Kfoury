@@ -25,7 +25,7 @@ public class senator_fragment extends Fragment {
     private int row_i;
     private Context context_i;
 
-    private String CurrentZip;
+   // private String CurrentZip;
 
 
 
@@ -67,7 +67,7 @@ public class senator_fragment extends Fragment {
 
     }
 
-    public void initializeWithSenatorName(String senator, int bg_id, int row_i_, Context context_i_, String zip_) {
+    public void initializeWithSenatorName(String senator, int bg_id, int row_i_, Context context_i_) {
 
 
         senator_bg_id = bg_id;
@@ -79,7 +79,7 @@ public class senator_fragment extends Fragment {
         context_i = context_i_;
 
 
-        CurrentZip = zip_;
+       // CurrentZip = zip_;
 
 
         // Do click handling here

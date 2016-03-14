@@ -8,46 +8,39 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.cs160.joleary.catnip.detailViewUnique">
+    tools:context="com.cs160.joleary.catnip.detailViewUnique"
+    android:background="#1b337d"
+    android:id="@+id/testt">
 
 
-    <ImageView
+    <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:id="@+id/imgSenator"
-    android:minWidth="100dp"
-    android:minHeight="100dp"
-    android:src="@android:mipmap/sym_def_app_icon"
-    android:layout_alignParentTop="true"
-    android:layout_centerHorizontal="true" />
+        android:id="@+id/txtSenatorName"
+    android:textSize="25dp"
+    android:textColor="#e5e5e5"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/textView3" />
 
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="McKfoury"
-    android:id="@+id/txtSenatorName"
-    android:textSize="50dp"
-    android:layout_below="@+id/imgSenator"
-    android:layout_centerHorizontal="true" />
-
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Senator - Independent"
     android:id="@+id/txtSenatorTitle"
-    android:textSize="24dp"
+    android:textSize="15dp"
+    android:textColor="#e5e5e5"
     android:layout_below="@+id/txtSenatorName"
-    android:layout_centerHorizontal="true" />
+    android:layout_alignStart="@+id/txtSenatorName" />
 
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Term ends at June 2012"
     android:id="@+id/txtSenatorTerm"
     android:textSize="15dp"
+    android:textStyle="italic"
+    android:textColor="#e5e5e5"
     android:layout_below="@+id/txtSenatorTitle"
-    android:layout_centerHorizontal="true"
-    android:textStyle="italic" />
+    android:layout_alignStart="@+id/txtSenatorName" />
 
 <TextView
     android:layout_width="wrap_content"
@@ -55,46 +48,63 @@
     android:text="Commitees"
     android:id="@+id/textView5"
     android:textSize="25dp"
-    android:textStyle="normal|bold"
-    android:layout_marginTop="46dp"
+    android:layout_marginTop="29dp"
+    android:textColor="#e5e5e5"
     android:layout_below="@+id/txtSenatorTerm"
     android:layout_centerHorizontal="true" />
 
-    <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Sponsored Bills"
-    android:id="@+id/textView6"
-    android:textSize="25dp"
-    android:textStyle="normal|bold"
-    android:layout_marginTop="89dp"
-    android:layout_centerHorizontal="true"
-    android:layout_below="@+id/textView5" />
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:id="@+id/scrollView"
+        android:layout_below="@+id/textView5"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/txtCommit"
+            android:textColor="#d8d8d8"
+            android:textSize="15dp" />
+    </ScrollView>
 
     <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceLarge"
-    android:text="- Fadi \n- Fadi\n- Fadi"
-    android:id="@+id/txtBills"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentBottom="true"
-    android:layout_alignParentEnd="true"
-    android:paddingTop="0dp"
-    android:paddingLeft="15dp"
-    android:layout_below="@+id/textView6" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bills"
+        android:id="@+id/textView3"
+        android:textSize="25dp"
+        android:textColor="#e5e5e5"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/scrollView" />
 
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceLarge"
-    android:text="- Large Text\n- Fadi\n- Fadi"
-    android:id="@+id/txtCommitees"
-    android:layout_alignParentStart="true"
-    android:layout_alignParentEnd="true"
-    android:layout_alignBottom="@+id/textView6"
-    android:paddingLeft="15dp"
-    android:paddingTop="10dp"
-    android:layout_below="@+id/textView5" />
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:id="@+id/scrollView2"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/txtBills"
+            android:textColor="#d8d8d8"
+            android:textSize="15dp" />
+    </ScrollView>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/imgSenator_"
+        android:minWidth="100dp"
+        android:minHeight="100dp"
+        android:src="@android:drawable/stat_notify_sync"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

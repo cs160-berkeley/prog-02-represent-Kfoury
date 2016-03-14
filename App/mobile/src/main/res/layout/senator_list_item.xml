@@ -2,28 +2,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/senatorlist">
+    android:id="@+id/senatorlist"
+    android:background="#1b337d">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageView"
+        android:id="@+id/imgSenator_"
         android:minWidth="100dp"
         android:minHeight="100dp"
-        android:layout_marginStart="37dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="25dp"
         android:src="@android:mipmap/sym_def_app_icon"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:scaleType="centerCrop"
+        android:maxHeight="100dp"
+        android:maxWidth="100dp"
+        android:layout_marginRight="25dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="McKfoury"
         android:id="@+id/txtName"
-        android:layout_alignTop="@+id/imageView"
-        android:layout_toEndOf="@+id/imageView"
-        android:textSize="30dp" />
+        android:layout_alignTop="@+id/imgSenator_"
+        android:layout_toEndOf="@+id/imgSenator_"
+        android:textSize="15dp"
+        android:textColor="#e5e5e5" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -31,47 +37,101 @@
         android:text="Independent"
         android:id="@+id/txtParty"
         android:layout_below="@+id/txtName"
-        android:layout_toEndOf="@+id/imageView"
-        android:textSize="24dp" />
+        android:layout_toEndOf="@+id/imgSenator_"
+        android:textSize="15dp"
+        android:textColor="#e5e5e5" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="fadi@fadi.space"
+        android:text="fadi@fadi.spac dffd gfd gfdg dfg dfg dfgdfe"
         android:id="@+id/txtEmail"
         android:paddingTop="10dp"
+        android:textSize="10dp"
         android:layout_below="@+id/txtParty"
-        android:layout_alignStart="@+id/txtParty" />
+        android:layout_toEndOf="@+id/imgSenator_"
+        android:layout_alignParentStart="false"
+        android:autoText="false"
+        android:layout_marginRight="0dp"
+        android:layout_marginLeft="5dp"
+        android:textColor="#e5e5e5" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="http://fadi.space"
+        android:text="ds fds fdfg fdg df gdfgdf gdfg  dfg dfgdfg df gdfg "
         android:id="@+id/txtWeb"
         android:paddingTop="10dp"
+        android:textSize="10dp"
         android:layout_below="@+id/txtEmail"
-        android:layout_toEndOf="@+id/imageView" />
+        android:layout_alignStart="@+id/txtParty"
+        android:layout_alignParentEnd="true"
+        android:autoText="false"
+        android:layout_marginRight="0dp"
+        android:layout_marginLeft="5dp"
+        android:textColor="#e5e5e5" />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView2"
-        android:src="@drawable/group"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtWeb" />
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:id="@+id/imageView"
+        android:src="@drawable/twitter2"
+        android:maxHeight="100dp"
+        android:maxWidth="100dp"
+        android:layout_below="@+id/imgSenator_"
+        android:layout_alignStart="@+id/imgSenator_"
+        android:layout_marginTop="25dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="today we are sending a #powerful message to the cynics who said we are dreamers"
-        android:id="@+id/txtTweet"
+        android:text="today we are sending a #powerful message to the cynics who said we are dreamer@s"
+        android:id="@+id/txttweet"
         android:paddingTop="0dp"
-        android:textSize="20dp"
+        android:textSize="15dp"
         android:paddingEnd="20dp"
-        android:paddingStart="20dp"
-        android:textStyle="italic"
-        android:layout_below="@+id/imageView2"
-        android:layout_alignParentStart="true"
-        android:paddingBottom="30dp" />
+        android:paddingStart="0dp"
+        android:paddingBottom="30dp"
+        android:textColor="#e5e5e5"
+        android:layout_below="@+id/imageView"
+        android:layout_alignStart="@+id/imageView"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="\@Fadi"
+        android:id="@+id/txttwittername"
+        android:paddingTop="0dp"
+        android:textSize="12dp"
+        android:layout_below="@+id/imgSenator_"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_alignBottom="@+id/imageView"
+        android:textColor="#ffffff"
+        android:layout_marginTop="25dp" />
+
+    <ImageView
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:id="@+id/imageView2"
+        android:src="@drawable/email"
+        android:maxHeight="100dp"
+        android:maxWidth="100dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginEnd="40dp"
+        android:backgroundTint="#ffffff"
+        android:layout_above="@+id/txtWeb"
+        android:layout_toStartOf="@+id/txtEmail" />
+
+    <ImageView
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:id="@+id/imageView3"
+        android:src="@drawable/link"
+        android:maxHeight="100dp"
+        android:maxWidth="100dp"
+        android:layout_marginRight="20dp"
+        android:layout_alignBottom="@+id/txtWeb"
+        android:layout_alignStart="@+id/imageView2" />
 
 </RelativeLayout>
